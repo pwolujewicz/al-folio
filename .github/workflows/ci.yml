@@ -1,19 +1,34 @@
-name: Deploy al-folio with GitHub Actions
+name: Deploy Jekyll site to GitHub Pages
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main  # Set this to your default branch
+  workflow_dispatch:
 
 jobs:
-  jekyll:
+  github-pages:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: helaili/jekyll-action@2.5.0
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Setup Ruby 💎
+        uses: ruby/setup-ruby@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          jekyll_src: '.'
-          jekyll_build: '_site'
-          target_branch: 'gh-pages'
+          ruby-version: 3.1  # Define the Ruby version
+
+      - name: Install dependencies 📦
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Build site 🔧
+        run: bundle exec jekyll build
+
+      - name: Deploy to GitHub Pages 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          publish_branch: gh-pages
