@@ -1,0 +1,19 @@
+name: Deploy al-folio with GitHub Actions
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  jekyll:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: helaili/jekyll-action@2.5.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          jekyll_src: '.'
+          jekyll_build: '_site'
+          target_branch: 'gh-pages'
